@@ -92,7 +92,8 @@
       "Bash(killall*)",
       "Bash(shutdown*)",
       "Bash(reboot*)",
-      "Bash(sudo *)"
+      "Bash(sudo *)",
+      "Bash(bun x *)"
     ]
   }
 }
