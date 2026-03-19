@@ -25,9 +25,9 @@ bun run typecheck        # TypeScript 型チェック
 
 ```bash
 cd apps/api
-npx wrangler dev                                    # APIローカル起動
-npx wrangler d1 migrations apply common-db --local  # 共通DBマイグレーション
-npx wrangler d1 migrations apply user-db --local    # ユーザーDBマイグレーション
+bunx wrangler dev                                    # APIローカル起動
+bunx wrangler d1 migrations apply common-db --local  # 共通DBマイグレーション
+bunx wrangler d1 migrations apply user-db --local    # ユーザーDBマイグレーション
 ```
 
 ## ルール

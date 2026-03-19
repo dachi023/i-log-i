@@ -127,8 +127,8 @@ return c.body(null, 204);
 ```bash
 # ローカル実行
 cd apps/api
-npx wrangler d1 migrations apply common-db --local
-npx wrangler d1 migrations apply user-db --local
+bunx wrangler d1 migrations apply common-db --local
+bunx wrangler d1 migrations apply user-db --local
 ```
 
 新しいマイグレーションは連番ファイルで追加:

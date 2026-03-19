@@ -35,8 +35,8 @@ bun run dev
 
 # DBマイグレーション（API）
 cd apps/api
-npx wrangler d1 migrations apply common-db --local
-npx wrangler d1 migrations apply user-db --local
+bunx wrangler d1 migrations apply common-db --local
+bunx wrangler d1 migrations apply user-db --local
 ```
 
 ## プロジェクト構成

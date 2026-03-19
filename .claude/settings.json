@@ -3,8 +3,8 @@
     "allow": [
       "Bash(bun *)",
       "Bash(bunx *)",
-      "Bash(npx wrangler *)",
-      "Bash(npx turbo *)",
+      "Bash(bunx wrangler *)",
+      "Bash(bunx turbo *)",
       "Bash(git status*)",
       "Bash(git log*)",
       "Bash(git diff*)",
