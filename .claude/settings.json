@@ -5,6 +5,7 @@
       "Bash(bunx *)",
       "Bash(bunx wrangler *)",
       "Bash(bunx turbo *)",
+      "Bash(gh *)",
       "Bash(git status*)",
       "Bash(git log*)",
       "Bash(git diff*)",
