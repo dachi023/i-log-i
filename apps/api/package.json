@@ -1,0 +1,22 @@
+{
+  "name": "@i-log-i/api",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "wrangler deploy --dry-run",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src/",
+    "db:migrate:common": "wrangler d1 migrations apply common-db --local",
+    "db:migrate:user": "wrangler d1 migrations apply user-db --local"
+  },
+  "dependencies": {
+    "@i-log-i/types": "workspace:*",
+    "@i-log-i/validation": "workspace:*",
+    "hono": "^4.7.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250312.0",
+    "wrangler": "^4.7.0"
+  }
+}

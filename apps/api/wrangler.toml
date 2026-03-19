@@ -1,0 +1,29 @@
+name = "i-log-i-api"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+
+# ローカル開発用のD1バインディング
+[[d1_databases]]
+binding = "COMMON_DB"
+database_name = "common-db"
+database_id = "common-db-local"
+migrations_dir = "src/db/common/migrations"
+
+[[d1_databases]]
+binding = "USER_DB"
+database_name = "user-db"
+database_id = "user-db-local"
+migrations_dir = "src/db/user/migrations"
+
+# R2バインディング
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "i-log-i-media"
+
+# KVバインディング
+[[kv_namespaces]]
+binding = "SESSION_KV"
+id = "session-kv-local"
+
+[vars]
+ENVIRONMENT = "development"

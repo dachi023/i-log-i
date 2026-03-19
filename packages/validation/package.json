@@ -1,0 +1,12 @@
+{
+  "name": "@i-log-i/validation",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@i-log-i/types": "workspace:*"
+  }
+}
