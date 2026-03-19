@@ -68,6 +68,5 @@ bun run lint:fix
 
 ## テスト
 
-- テストフレームワーク: TBD（vitest推奨）
-- ユニットテストは各モジュールと同階層に `.test.ts` で配置
-- D1のテストは `miniflare` のローカルD1を使用
+- 詳細は **[rules/testing.md](../rules/testing.md)** を参照
+- 実装とテストは常にセットで書くこと（テストなしのコード不可）
