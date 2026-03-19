@@ -1,10 +1,6 @@
 name: Pinact
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - ".github/**"
   pull_request:
     paths:
       - ".github/**"
