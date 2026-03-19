@@ -17,8 +17,7 @@ bun install              # 依存インストール
 bun run dev              # 全アプリ開発サーバー起動
 bun run build            # 全アプリビルド
 bun run lint             # Biome lint チェック
-bun run lint:fix         # Biome lint 自動修正
-bun run format           # Biome フォーマット
+bun run lint:fix         # Biome lint 自動修正 + フォーマット
 bun run typecheck        # TypeScript 型チェック
 ```
 

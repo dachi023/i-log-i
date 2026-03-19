@@ -14,11 +14,8 @@
 # lint チェック
 bun run lint
 
-# 自動修正
+# 自動修正 + フォーマット
 bun run lint:fix
-
-# フォーマット
-bun run format
 ```
 
 ## 命名規則
