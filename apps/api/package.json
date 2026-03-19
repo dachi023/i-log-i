@@ -8,7 +8,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check src/",
     "db:migrate:common": "wrangler d1 migrations apply common-db --local",
-    "db:migrate:user": "wrangler d1 migrations apply user-db --local"
+    "db:migrate:user": "wrangler d1 migrations apply user-db --local",
+    "test": "vitest run"
   },
   "dependencies": {
     "@i-log-i/types": "workspace:*",
@@ -16,7 +17,9 @@
     "hono": "^4.7.0"
   },
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.8.0",
     "@cloudflare/workers-types": "^4.20250312.0",
+    "vitest": "^3.1.0",
     "wrangler": "^4.7.0"
   }
 }
