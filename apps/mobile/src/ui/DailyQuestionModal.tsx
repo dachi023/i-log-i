@@ -98,6 +98,7 @@ export function DailyQuestionModal() {
   const [scaleValue, setScaleValue] = useState<number | null>(null);
 
   const questionId = todaysDailyQuestion?.id ?? null;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: questionId変更時にステートをリセットする意図的な依存
   useEffect(() => {
     setAnswerText("");
     setSelectedOption(null);

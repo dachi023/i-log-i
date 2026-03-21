@@ -77,7 +77,12 @@ export default function OnboardingScreen() {
         />
       </View>
 
-      <View style={[styles.footer, { paddingBottom: keyboardVisible ? spacing.sm : insets.bottom + spacing.lg }]}>
+      <View
+        style={[
+          styles.footer,
+          { paddingBottom: keyboardVisible ? spacing.sm : insets.bottom + spacing.lg },
+        ]}
+      >
         <Pressable
           style={[styles.button, !answerText.trim() && styles.buttonDisabled]}
           onPress={handleNext}
