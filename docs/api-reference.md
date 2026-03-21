@@ -34,8 +34,8 @@ Authorization: Bearer <access_token>
 {
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "Title exceeds maximum length",
-    "details": { "field": "title", "max": 200 }
+    "message": "Body exceeds maximum length",
+    "details": { "field": "body", "max": 10000 }
   }
 }
 ```
@@ -139,7 +139,6 @@ Refresh TokenをKVから削除。認証必要。
 
 **Query Parameters:**
 - `cursor`, `limit`
-- `entryType`: `diary` | `memo` | `voice_note`（フィルタ）
 
 ### `GET /entries/:id`
 エントリ詳細。紐付くメディアと人物タグも含む。
@@ -150,15 +149,15 @@ Refresh TokenをKVから削除。認証必要。
 **Request Body:**
 ```json
 {
-  "entryType": "diary",
-  "title": "今日の出来事",
   "body": "本文...",
-  "recordedAt": "2025-03-01T10:00:00Z",
-  "tags": ["日常", "仕事"],
-  "isPrivate": false,
-  "personTagIds": ["ulid1", "ulid2"]
+  "recordedAt": "2025-03-01T10:00:00Z"
 }
 ```
+
+| フィールド | 必須 | 説明 |
+|-----------|------|------|
+| `body` | Yes | 記録本文 |
+| `recordedAt` | Yes | 記録日時（ISO 8601） |
 
 ### `PATCH /entries/:id`
 エントリ更新。送信フィールドのみ更新。
@@ -247,9 +246,6 @@ R2へのダイレクトアップロード用の署名付きURLを取得。
 
 ## パーソナリティ質問 `/questions`
 
-### `GET /questions/next`
-次に回答すべき質問を取得。カテゴリと優先度に基づく。
-
 ### `POST /questions/:id/answer`
 質問に回答。
 
@@ -259,9 +255,6 @@ R2へのダイレクトアップロード用の署名付きURLを取得。
   "answerText": "回答テキスト..."
 }
 ```
-
-### `POST /questions/:id/skip`
-質問をスキップ。
 
 ### `GET /questions/answers`
 自分の回答一覧。

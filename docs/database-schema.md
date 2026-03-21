@@ -175,12 +175,8 @@ CREATE TABLE device_tokens (
 ```sql
 CREATE TABLE entries (
   id            TEXT PRIMARY KEY,
-  entry_type    TEXT NOT NULL DEFAULT 'diary',  -- diary|memo|voice_note
-  title         TEXT,
   body          TEXT,
   recorded_at   TEXT NOT NULL,
-  tags          TEXT,                      -- JSON配列: ["tag1", "tag2"]
-  is_private    INTEGER NOT NULL DEFAULT 0,
   created_at    TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -328,7 +324,6 @@ CREATE TABLE bot_feedback (
 
 ### USER_DB
 - `idx_entries_recorded_at` ON entries(recorded_at)
-- `idx_entries_type` ON entries(entry_type)
 - `idx_media_entry` ON media(entry_id)
 - `idx_media_type` ON media(media_type)
 - `idx_entry_person_tags_person` ON entry_person_tags(person_tag_id)
