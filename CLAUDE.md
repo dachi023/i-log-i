@@ -69,6 +69,17 @@ docs/                     # 仕様・設計ドキュメント
 rules/                    # 開発ルール
 ```
 
+## ドキュメント同期
+
+実装変更時は、関連する仕様ドキュメントを必ず同時に更新すること。対象:
+
+- **[docs/spec.md](docs/spec.md)** — UI仕様、データモデル、APIエンドポイント一覧
+- **[docs/architecture.md](docs/architecture.md)** — 画面構成、ナビゲーション構成、コンポーネント構成
+- **[docs/api-reference.md](docs/api-reference.md)** — エンドポイントのリクエスト/レスポンス仕様
+- **[docs/database-schema.md](docs/database-schema.md)** — テーブル定義、インデックス
+
+「実装だけ変えてドキュメントは後で」は禁止。実装とドキュメントは常にセットで変更する。
+
 ## 実装上の注意
 
 - 全IDはULID形式（`@i-log-i/validation` の `isValidUlid()` で検証）

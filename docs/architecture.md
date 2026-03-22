@@ -102,19 +102,34 @@ Refresh Tokenの保管と無効化に使用。TTL付きで自動期限切れ。
 
 ### React Native + Expo
 
-Expo Managed Workflowで iOS/Android/Web をサポート。現在は初期スキャフォールドのみ。
+Expo Managed Workflowで iOS/Android/Web をサポート。
 
-### 想定する画面構成
+### ナビゲーション構成
 
-1. **認証画面**: OAuth（Google/Apple）ログイン
-2. **ホーム/ダッシュボード**: 記録一覧、クイック記録
-3. **記録画面**: エントリ作成・編集（日記/メモ/音声）
-4. **質問画面**: パーソナリティ質問への回答
-5. **プロファイル画面**: AIプロファイルの閲覧・修正
-6. **ボット画面**: AIとの会話
-7. **受取人管理画面**: 招待・公開範囲設定
-8. **受信画面**: 共有されたコンテンツの閲覧
-9. **設定画面**: 生存確認設定、第三者管理、アカウント
+- **Stack Navigator**（expo-router）をルートに配置
+- **GlassBackground**（`ui/GlassBackground.tsx`）: iOS 26+では`expo-glass-effect`の`GlassView`、非対応では`expo-blur`の`BlurView`にフォールバックするラッパー
+- **BottomBar**（`ui/BottomBar.tsx`）: 画面下部のフローティングUI用コンテナ。Safe Area下端基準の位置管理と`keyboardAware`オプションによるキーボード追従を共通化。全画面で同じ位置に統一
+- **FloatingFab**（`ui/FloatingFab.tsx`）: `BottomBar`を内包する追加ボタンコンポーネント。`GlassView`（iOS 26+）/ `BlurView`（フォールバック）で`colorScheme="light"`の明るいガラスモーフィズム。`FAB_SIZE=52`をexport
+- **グローバルNavBar**（`ui/NavBar.tsx`）: `GlassBackground`で半透明、タイトル中央寄せ、右にハンバーガーメニュー。サブページでは左に戻るアイコンを表示。モーダル画面では`modal`propにより右に閉じる（×）ボタンのみ表示
+- **グローバルSideMenu**（`ui/SideMenu.tsx`）: 右からアニメーション付きで開閉するDrawer。固定の半透明背景色（`rgba(243,244,246,0.97)`）を使用（`Animated.View`内でのGlassView互換性問題を回避）。全画面からアクセス可能。コンテンツ全体のスワイプ操作でも開閉でき、開いた際はコンテンツ部がDrawer幅分左に押し出される。下部のユーザーボタンはピル型（`borderRadius: 24`）で軽いシャドウによる浮遊感
+- **DrawerContext**（`ui/DrawerContext.tsx`）: サイドバーの開閉状態とAnimated.Valueをグローバルに管理。コンテンツのpush-outアニメーションも制御
+- **DailyQuestionModal**（`ui/DailyQuestionModal.tsx`）: 認証済み＆オンボーディング完了後に、未回答のdaily質問を1問モーダル表示。回答タイプ（`text`/`select`/`scale`）に応じた入力UIを出し分け
+
+### 画面構成
+
+Drawer内の画面（グローバルナビゲーション）:
+1. **日々の記録**（`(drawer)/index.tsx`）: 日付ベースのタイムライン表示。下部に`BottomBar`（`keyboardAware`）でピル型検索バー + 追加FABのフローティングバーを配置
+2. **ボット**（`(drawer)/bot.tsx`）: AIボット会話一覧。下部に`FloatingFab`で新規会話作成ボタンを配置
+3. **パーソナリティ**（`(drawer)/profile.tsx`）: AIが分析したパーソナリティの閲覧。ヘッダーに最終更新日（バージョン番号ではなく日付）とソースサマリーを表示
+- **設定**（`settings.tsx`）はメニューに表示せず、サイドバー下部のユーザーアイコン+名前タップでモーダル遷移
+
+サブページ（Stack遷移）:
+- **記録詳細**（`entries/[id].tsx`）: 日付と本文表示 + 編集・削除アクション
+- **記録作成**（`entries/create.tsx`）: 本文入力 + 日付選択 + メディア添付（モーダル）
+- **記録編集**（`entries/edit.tsx`）: 既存エントリの本文・日付を編集（モーダル）
+- **ボット会話**（`bot/[id].tsx`）: チャットUI
+- **認証**（`(auth)/login.tsx`）: OAuth ログイン
+- **オンボーディング**（`onboarding.tsx`）: 初回セットアップ質問（3問）
 
 ## LLM統合
 

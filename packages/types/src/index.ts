@@ -31,16 +31,10 @@ export interface AuthProviderRecord {
 // 記録
 // ============================================================
 
-export type EntryType = "diary" | "memo" | "voice_note";
-
 export interface Entry {
   id: string;
-  entryType: EntryType;
-  title: string | null;
   body: string | null;
   recordedAt: string;
-  tags: string[];
-  isPrivate: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -73,12 +67,18 @@ export interface PersonTag {
 // ============================================================
 
 export type QuestionCategory = "setup" | "daily" | "scenario" | "supplemental";
+export type QuestionAnswerType = "text" | "select" | "scale";
 
 export interface Question {
   id: string;
   category: QuestionCategory;
   subcategory: string | null;
   questionText: string;
+  answerType: QuestionAnswerType;
+  options: string[] | null;
+  scaleMin: number | null;
+  scaleMax: number | null;
+  scaleLabels: [string, string] | null;
   isSystem: boolean;
   priority: number;
   createdAt: string;
