@@ -2,8 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { GlassContainer, GlassView, isGlassEffectAPIAvailable } from "expo-glass-effect";
 import { useRouter } from "expo-router";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   InputAccessoryView,
   Keyboard,
@@ -139,7 +140,7 @@ function FloatingBar({
 export default function EntriesListScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { entries } = useStore();
+  const { entries, isLoadingEntries, refreshEntries, loadMoreEntries, hasMoreEntries } = useStore();
   const [searchQuery, setSearchQuery] = useState("");
 
   const headerHeight = insets.top + 44;
@@ -157,6 +158,15 @@ export default function EntriesListScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={[styles.list, { paddingTop: headerHeight + spacing.md }]}
         keyboardShouldPersistTaps="handled"
+        onRefresh={refreshEntries}
+        refreshing={isLoadingEntries}
+        onEndReached={!searchQuery.trim() && hasMoreEntries ? loadMoreEntries : undefined}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isLoadingEntries && hasMoreEntries ? (
+            <ActivityIndicator style={{ paddingVertical: spacing.lg }} color={colors.primary} />
+          ) : null
+        }
         renderItem={({ item, index }) => {
           const date = formatDate(item.recordedAt);
           const prev = index > 0 ? filteredEntries[index - 1] : null;

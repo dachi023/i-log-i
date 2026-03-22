@@ -27,9 +27,13 @@ export default function EntryDetailScreen() {
       {
         text: "削除",
         style: "destructive",
-        onPress: () => {
-          deleteEntry(id);
-          router.back();
+        onPress: async () => {
+          try {
+            await deleteEntry(id);
+            router.back();
+          } catch {
+            Alert.alert("エラー", "削除に失敗しました。");
+          }
         },
       },
     ]);

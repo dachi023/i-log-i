@@ -67,6 +67,8 @@ i-log-i は「デジタル遺産」アプリケーションである。ユーザ
 - **フレームワーク**: React Native + Expo
 - **プラットフォーム**: iOS / Android / Web
 - **ナビゲーション**: サイドメニュー（Drawer）方式。タブバーは使用しない
+- **APIクライアント**: `src/api/client.ts` — fetch wrapperで全エンドポイントをカバー。開発時は`expo-constants`のhostUriからdev machineのIPを動的取得しローカルAPI（port 8787）に接続
+- **状態管理**: `src/data/store.ts` — React Context + useStateベースのストア。起動時にAPI一括取得（entries, user, questions, answers, profile, conversations）。エラー時は`initError`で接続エラー画面を表示
 
 #### モバイルUIデザイン方針
 
@@ -116,6 +118,7 @@ i-log-i は「デジタル遺産」アプリケーションである。ユーザ
 
 ##### デイリー質問（パーソナリティ収集）
 - 認証済み＆オンボーディング完了後のみ、モーダルで未回答のdaily質問を1問表示する
+- モーダルは1セッション1回表示。dismissedステートで再表示を抑制
 - **スキップ不可**。回答するまでモーダルは閉じられない
 - 質問の出題順は`questions.priority`に従う
 - **回答タイプ**: 質問ごとに`answerType`フィールドで入力UIを切り替える

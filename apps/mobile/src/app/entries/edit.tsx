@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useStore } from "../../data/store";
 import { borderRadius, colors, fontSize, spacing } from "../../theme";
 import { NAV_BAR_CONTENT_HEIGHT, NavBar } from "../../ui/NavBar";
@@ -39,12 +39,21 @@ export default function EditEntryScreen() {
     );
   }
 
-  const handleSave = () => {
-    updateEntry(id, {
-      body: body.trim() || null,
-      recordedAt,
-    });
-    router.back();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await updateEntry(id, {
+        body: body.trim() || null,
+        recordedAt,
+      });
+      router.back();
+    } catch {
+      Alert.alert("エラー", "保存に失敗しました。もう一度お試しください。");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const isChanged = body.trim() !== (entry.body ?? "") || recordedAt !== entry.recordedAt;
@@ -96,11 +105,11 @@ export default function EditEntryScreen() {
         />
 
         <Pressable
-          style={[styles.saveButton, !isChanged && styles.saveButtonDisabled]}
+          style={[styles.saveButton, (!isChanged || isSaving) && styles.saveButtonDisabled]}
           onPress={handleSave}
-          disabled={!isChanged}
+          disabled={!isChanged || isSaving}
         >
-          <Text style={styles.saveText}>保存</Text>
+          <Text style={styles.saveText}>{isSaving ? "保存中..." : "保存"}</Text>
         </Pressable>
       </ScrollView>
     </View>

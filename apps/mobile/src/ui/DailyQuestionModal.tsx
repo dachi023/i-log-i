@@ -96,6 +96,7 @@ export function DailyQuestionModal() {
   const [answerText, setAnswerText] = useState("");
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [scaleValue, setScaleValue] = useState<number | null>(null);
+  const [dismissed, setDismissed] = useState(false);
 
   const questionId = todaysDailyQuestion?.id ?? null;
   // biome-ignore lint/correctness/useExhaustiveDependencies: questionId変更時にステートをリセットする意図的な依存
@@ -103,10 +104,12 @@ export function DailyQuestionModal() {
     setAnswerText("");
     setSelectedOption(null);
     setScaleValue(null);
+    setDismissed(false);
   }, [questionId]);
 
   if (!isAuthenticated || !isOnboarded) return null;
   if (!todaysDailyQuestion) return null;
+  if (dismissed) return null;
 
   const { answerType } = todaysDailyQuestion;
 
@@ -125,10 +128,15 @@ export function DailyQuestionModal() {
 
   const canSubmit = getAnswerValue() !== null;
 
-  const handleAnswer = () => {
+  const handleAnswer = async () => {
     const value = getAnswerValue();
     if (!value) return;
-    addAnswer(todaysDailyQuestion.id, value);
+    setDismissed(true);
+    try {
+      await addAnswer(todaysDailyQuestion.id, value);
+    } catch {
+      // API失敗でもモーダルは閉じた状態を維持
+    }
   };
 
   return (
