@@ -104,6 +104,43 @@ Refresh Tokenの保管と無効化に使用。TTL付きで自動期限切れ。
 
 Expo Managed Workflowで iOS/Android/Web をサポート。
 
+### APIクライアント層（`src/api/client.ts`）
+
+バックエンドAPIとの通信を担う薄いfetch wrapper。
+
+- **ベースURL解決**: 開発時は`expo-constants`の`hostUri`からExpo DevServerのホストIPを取得し、ポート8787でローカルAPIに接続。本番は`https://api.i-log-i.app`
+- **`request<T>()`関数**: 全リクエストの共通処理（JSON serialize/deserialize、エラーハンドリング、204対応）
+- **`ApiError`クラス**: HTTPステータス・エラーコード・メッセージを保持する型付きエラー
+- **エンドポイント関数**: `getEntries`, `createEntry`, `updateEntry`, `deleteEntry`, `searchEntries`, `getMe`, `getQuestions`, `getAnswers`, `answerQuestion`, `getProfile`, `getConversations`, `createConversation`, `getMessages`, `sendMessage`
+
+### ストア設計（`src/data/store.ts`）
+
+React Context + useStateベースのグローバルストア。`StoreProvider`で全画面にデータを提供。
+
+**初期化フロー**:
+- 起動時に`Promise.all`でAPI一括取得（entries, user, questions, answers, profile, conversations）
+- 成功時: 各stateにセット → `isInitializing: false`
+- 失敗時: `initError`にメッセージをセット → `_layout.tsx`の`AppGate`が接続エラー画面を表示
+
+**ローディングステート**:
+- `isInitializing`: 初期データ取得中
+- `isLoadingEntries`: pull-to-refresh / 無限スクロール中
+- `isSubmitting`: エントリ作成・回答送信中
+
+**データ更新パターン**:
+- **作成（wait-for-server）**: APIレスポンス確定後にstateへ追加
+- **更新（optimistic update）**: 即座にUI反映 → API失敗時はサーバーから再取得してrevert
+- **削除（optimistic update）**: 即座にUI削除 → API失敗時は削除前データをrevert
+
+**ページネーション**:
+- `refreshEntries()`: 先頭から再取得（pull-to-refresh用）
+- `loadMoreEntries()`: カーソルベースで次ページ読み込み（無限スクロール用）
+- `entriesCursor` / `hasMoreEntries` で状態管理
+
+**派生データ**:
+- `setupQuestions`: `category === "setup"`をpriority順にソート
+- `todaysDailyQuestion`: 未回答のdaily質問をpriority順で1問選出
+
 ### ナビゲーション構成
 
 - **Stack Navigator**（expo-router）をルートに配置
@@ -113,7 +150,8 @@ Expo Managed Workflowで iOS/Android/Web をサポート。
 - **グローバルNavBar**（`ui/NavBar.tsx`）: `GlassBackground`で半透明、タイトル中央寄せ、右にハンバーガーメニュー。サブページでは左に戻るアイコンを表示。モーダル画面では`modal`propにより右に閉じる（×）ボタンのみ表示
 - **グローバルSideMenu**（`ui/SideMenu.tsx`）: 右からアニメーション付きで開閉するDrawer。固定の半透明背景色（`rgba(243,244,246,0.97)`）を使用（`Animated.View`内でのGlassView互換性問題を回避）。全画面からアクセス可能。コンテンツ全体のスワイプ操作でも開閉でき、開いた際はコンテンツ部がDrawer幅分左に押し出される。下部のユーザーボタンはピル型（`borderRadius: 24`）で軽いシャドウによる浮遊感
 - **DrawerContext**（`ui/DrawerContext.tsx`）: サイドバーの開閉状態とAnimated.Valueをグローバルに管理。コンテンツのpush-outアニメーションも制御
-- **DailyQuestionModal**（`ui/DailyQuestionModal.tsx`）: 認証済み＆オンボーディング完了後に、未回答のdaily質問を1問モーダル表示。回答タイプ（`text`/`select`/`scale`）に応じた入力UIを出し分け
+- **DailyQuestionModal**（`ui/DailyQuestionModal.tsx`）: 認証済み＆オンボーディング完了後に、未回答のdaily質問を1問モーダル表示。回答タイプ（`text`/`select`/`scale`）に応じた入力UIを出し分け。dismissedステートで1セッション1回表示
+- **AppGate**（`app/_layout.tsx`内）: `isInitializing`中はローディング表示、`initError`時は接続エラー画面を表示。正常時のみDrawer・SideMenu・DailyQuestionModalを描画
 
 ### 画面構成
 

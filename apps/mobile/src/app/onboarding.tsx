@@ -33,18 +33,44 @@ export default function OnboardingScreen() {
 
   const question = setupQuestions[currentIndex];
   const isLast = currentIndex === setupQuestions.length - 1;
-  const progress = (currentIndex + 1) / setupQuestions.length;
+  const progress = setupQuestions.length > 0 ? (currentIndex + 1) / setupQuestions.length : 1;
 
-  const handleNext = () => {
-    if (!answerText.trim()) return;
-    addAnswer(question.id, answerText.trim());
-    setAnswerText("");
-
-    if (isLast) {
+  // セットアップ質問がない場合はスキップ
+  useEffect(() => {
+    if (setupQuestions.length === 0) {
       completeOnboarding();
       router.replace("/(drawer)");
-    } else {
-      setCurrentIndex((prev) => prev + 1);
+    }
+  }, [setupQuestions.length, completeOnboarding, router]);
+
+  if (setupQuestions.length === 0 || !question) return null;
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleNext = async () => {
+    if (!answerText.trim() || isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await addAnswer(question.id, answerText.trim());
+      setAnswerText("");
+
+      if (isLast) {
+        completeOnboarding();
+        router.replace("/(drawer)");
+      } else {
+        setCurrentIndex((prev) => prev + 1);
+      }
+    } catch {
+      // フォールバック: エラーでも進める
+      setAnswerText("");
+      if (isLast) {
+        completeOnboarding();
+        router.replace("/(drawer)");
+      } else {
+        setCurrentIndex((prev) => prev + 1);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -77,7 +103,12 @@ export default function OnboardingScreen() {
         />
       </View>
 
-      <View style={[styles.footer, { paddingBottom: keyboardVisible ? spacing.sm : insets.bottom + spacing.lg }]}>
+      <View
+        style={[
+          styles.footer,
+          { paddingBottom: keyboardVisible ? spacing.sm : insets.bottom + spacing.lg },
+        ]}
+      >
         <Pressable
           style={[styles.button, !answerText.trim() && styles.buttonDisabled]}
           onPress={handleNext}

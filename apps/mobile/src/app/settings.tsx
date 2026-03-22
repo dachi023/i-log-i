@@ -53,6 +53,8 @@ export default function SettingsScreen() {
   const user = store.user;
   const navBarHeight = spacing.md + 44;
 
+  if (!user) return null;
+
   const avatarUri = `https://api.dicebear.com/9.x/glass/png?seed=${encodeURIComponent(user.id)}&size=112`;
 
   const handleItemPress = (label: string) => {

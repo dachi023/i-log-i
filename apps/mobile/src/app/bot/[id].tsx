@@ -23,9 +23,15 @@ export default function BotConversationScreen() {
   const flatListRef = useRef<FlatList>(null);
   const [inputText, setInputText] = useState("");
 
+  const [isSending, setIsSending] = useState(false);
+
   const messages = store.botMessages.filter(
     (m: { conversationId: string }) => m.conversationId === id,
   );
+
+  useEffect(() => {
+    store.loadMessages(id);
+  }, [id, store.loadMessages]);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -42,11 +48,18 @@ export default function BotConversationScreen() {
     return `${hours}:${minutes}`;
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const trimmed = inputText.trim();
-    if (!trimmed) return;
-    store.addBotMessage(id, trimmed);
+    if (!trimmed || isSending) return;
     setInputText("");
+    setIsSending(true);
+    try {
+      await store.addBotMessage(id, trimmed);
+    } catch {
+      // メッセージは optimistic revert される
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const renderMessage = ({

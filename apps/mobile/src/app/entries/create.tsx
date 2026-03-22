@@ -32,12 +32,21 @@ export default function CreateEntryScreen() {
   const [recordedAt, setRecordedAt] = useState(new Date().toISOString());
   const [attachments, setAttachments] = useState<MediaAttachment[]>([]);
 
-  const handleSave = () => {
-    addEntry({
-      body: body.trim() || null,
-      recordedAt,
-    });
-    router.back();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await addEntry({
+        body: body.trim() || null,
+        recordedAt,
+      });
+      router.back();
+    } catch {
+      Alert.alert("エラー", "保存に失敗しました。もう一度お試しください。");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleAttach = (type: "image" | "video" | "audio") => {
@@ -142,11 +151,11 @@ export default function CreateEntryScreen() {
         </View>
 
         <Pressable
-          style={[styles.saveButton, !body.trim() && styles.saveButtonDisabled]}
+          style={[styles.saveButton, (!body.trim() || isSaving) && styles.saveButtonDisabled]}
           onPress={handleSave}
-          disabled={!body.trim()}
+          disabled={!body.trim() || isSaving}
         >
-          <Text style={styles.saveText}>保存</Text>
+          <Text style={styles.saveText}>{isSaving ? "保存中..." : "保存"}</Text>
         </Pressable>
       </ScrollView>
     </View>

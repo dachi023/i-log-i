@@ -1,8 +1,9 @@
 import { Stack } from "expo-router";
 import { useRef } from "react";
-import { Animated, PanResponder } from "react-native";
+import { ActivityIndicator, Animated, PanResponder, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StoreProvider } from "../data/store";
+import { StoreProvider, useStore } from "../data/store";
+import { colors, fontSize, spacing } from "../theme";
 import { DailyQuestionModal } from "../ui/DailyQuestionModal";
 import { DRAWER_WIDTH, DrawerProvider, useDrawer } from "../ui/DrawerContext";
 import { SideMenu } from "../ui/SideMenu";
@@ -79,15 +80,66 @@ function MainContent() {
   );
 }
 
+function AppGate() {
+  const { isInitializing, initError } = useStore();
+
+  if (isInitializing) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: colors.background,
+        }}
+      >
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (initError) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: colors.background,
+          padding: spacing.xl,
+        }}
+      >
+        <Text style={{ fontSize: fontSize.lg, fontWeight: "600", color: colors.text }}>
+          接続エラー
+        </Text>
+        <Text
+          style={{
+            fontSize: fontSize.sm,
+            color: colors.textSecondary,
+            textAlign: "center",
+            marginTop: spacing.sm,
+          }}
+        >
+          {initError}
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <DrawerProvider>
+      <MainContent />
+      <SideMenu />
+      <DailyQuestionModal />
+    </DrawerProvider>
+  );
+}
+
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StoreProvider>
-        <DrawerProvider>
-          <MainContent />
-          <SideMenu />
-          <DailyQuestionModal />
-        </DrawerProvider>
+        <AppGate />
       </StoreProvider>
     </GestureHandlerRootView>
   );

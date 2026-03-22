@@ -34,7 +34,9 @@ export function SideMenu() {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
 
-  const avatarUri = `https://api.dicebear.com/9.x/glass/png?seed=${encodeURIComponent(user.id)}&size=80`;
+  const avatarUri = user
+    ? `https://api.dicebear.com/9.x/glass/png?seed=${encodeURIComponent(user.id)}&size=80`
+    : undefined;
 
   const panResponder = useRef(
     PanResponder.create({
@@ -132,7 +134,7 @@ export function SideMenu() {
             <View style={styles.userGlass}>
               <Image source={{ uri: avatarUri }} style={styles.avatar} />
               <Text style={styles.userName} numberOfLines={1}>
-                {user.displayName}
+                {user?.displayName}
               </Text>
             </View>
           </Pressable>

@@ -15,9 +15,13 @@ export default function BotScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = insets.top + 44;
 
-  const handleNewConversation = () => {
-    const conversation = store.createConversation();
-    router.push(`/bot/${conversation.id}`);
+  const handleNewConversation = async () => {
+    try {
+      const conversation = await store.createConversation();
+      router.push(`/bot/${conversation.id}`);
+    } catch {
+      // ignore - UI remains on bot list
+    }
   };
 
   const getLastMessage = (conversationId: string) => {
